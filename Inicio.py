@@ -1,10 +1,10 @@
 from tkinter import *
 from tkinter import filedialog
 from tkinter import messagebox
-import cv2 as cv
 from PIL import Image,ImageTk
 from numpy import *
 from operaciones_histograma import *
+import cv2 as cv
 
 def drag_start(event):
     global img_sel,seleccion_anterior
