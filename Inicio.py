@@ -4,6 +4,7 @@ from tkinter import messagebox
 from PIL import Image,ImageTk
 from numpy import *
 from operaciones_histograma import *
+from filtros import *
 import cv2 as cv
 
 def drag_start(event):
@@ -42,6 +43,20 @@ def button_hover(e):
         status_label.config(text="Estrechamiento del histograma")
     elif widget==b8:
         status_label.config(text="Eliminar imagen")
+    elif widget==b9:
+        status_label.config(text="Ruido Gaussiano")
+    elif widget==b10:
+        status_label.config(text="Filtro Gaussiano")
+    elif widget==b11:
+        status_label.config(text="Filtro Roberts")
+    elif widget==b12:
+        status_label.config(text="Filtro Prewitt")
+    elif widget==b13:
+        status_label.config(text="Filtro Sobel")
+    elif widget==b14:
+        status_label.config(text="Filtro Máximo")
+    elif widget==b15:
+        status_label.config(text="Filtro Mínimo")
 
 def button_hover_leave(e):
     status_label.config(text="")
@@ -283,6 +298,57 @@ def histEstr():
         return
     eligeEstr()
 
+def ruidoGaussiano():
+    pass
+
+def filtroGaussiano():
+    #Si no hay imagenes seleccionadas muestra advertencia
+    if(len(im)==0):
+        messagebox.showwarning(message="Debes seleccionar una imagen", 
+                             title="Imagen no seleccionada")
+        return
+    img = fgaussiano(im[img_sel],3) #Se debe de preguntar al usuario
+    agregar_img(img)
+
+def filtroRoberts():
+    #Si no hay imagenes seleccionadas muestra advertencia
+    if(len(im)==0):
+        messagebox.showwarning(message="Debes seleccionar una imagen", 
+                             title="Imagen no seleccionada")
+        return
+    img = froberts(im[img_sel])
+    agregar_img(img[0])
+    agregar_img(img[1])
+    agregar_img(img[2])
+
+def filtroPrewitt():
+    #Si no hay imagenes seleccionadas muestra advertencia
+    if(len(im)==0):
+        messagebox.showwarning(message="Debes seleccionar una imagen", 
+                             title="Imagen no seleccionada")
+        return
+    img = fprewit(im[img_sel])
+    agregar_img(img[0])
+    agregar_img(img[1])
+    agregar_img(img[2])
+
+def filtroSobel():
+    #Si no hay imagenes seleccionadas muestra advertencia
+    if(len(im)==0):
+        messagebox.showwarning(message="Debes seleccionar una imagen", 
+                             title="Imagen no seleccionada")
+        return
+    img = fsobel(im[img_sel])
+    agregar_img(img[0])
+    agregar_img(img[1])
+    agregar_img(img[2])
+
+def filtroMaximo():
+    pass
+
+def filtroMinimo():
+    pass
+
 def eliminar_img():
     global imagenes,imagenesLabel,im,nomb_imagenes,seleccion_anterior,img_sel,frame
     imagenesLabel[img_sel].config(bd=0)
@@ -344,7 +410,7 @@ nomb_imagenes = list()
 seleccion_anterior = -1
 img_sel = -1
 
-Grid.rowconfigure(root,2,weight=1)
+Grid.rowconfigure(root,3,weight=1)
 Grid.columnconfigure(root,0,weight=1)
 Grid.columnconfigure(root,1,weight=1)
 Grid.columnconfigure(root,2,weight=1)
@@ -416,10 +482,60 @@ b8.grid(row=1,column=7)
 b8.bind("<Enter>",button_hover)
 b8.bind("<Leave>",button_hover_leave)
 
+#Segundo parcial
+#Ruido Gaussiano
+img9 = leer_imagen("iconos/ruido_gaussiano.png")
+b9=Button(root,image=img9,width=80,command=lambda:ruidoGaussiano())
+b9.grid(row=2,column=0)
+b9.bind("<Enter>",button_hover)
+b9.bind("<Leave>",button_hover_leave)
+
+#Ver histograma RGB
+img10 = leer_imagen("iconos/filtro_gaussiano.png")
+b10=Button(root,image=img10,width=80,command=lambda:filtroGaussiano())
+b10.grid(row=2,column=1)
+b10.bind("<Enter>",button_hover)
+b10.bind("<Leave>",button_hover_leave)
+
+#Desplazamiento del histograma a la izquierda
+img11 = leer_imagen("iconos/roberts.png")
+b11=Button(root,image=img11,width=80,command=lambda:filtroRoberts())
+b11.grid(row=2,column=2)
+b11.bind("<Enter>",button_hover)
+b11.bind("<Leave>",button_hover_leave)
+
+#Desplazamiento del histograma a la derecha
+img12 = leer_imagen("iconos/prewitt.png")
+b12=Button(root,image=img12,width=80,command=lambda:filtroPrewitt())
+b12.grid(row=2,column=3)
+b12.bind("<Enter>",button_hover)
+b12.bind("<Leave>",button_hover_leave)
+
+#Estiramiento del histograma
+img13 = leer_imagen("iconos/sobel.png")
+b13=Button(root,image=img13,width=80,command=lambda:filtroSobel())
+b13.grid(row=2,column=4)
+b13.bind("<Enter>",button_hover)
+b13.bind("<Leave>",button_hover_leave)
+
+#Histograma de la imagen ecualizada
+img14 = leer_imagen("iconos/ecualizacion.png")
+b14=Button(root,image=img14,width=80,command=lambda:filtroMaximo())
+b14.grid(row=2,column=5)
+b14.bind("<Enter>",button_hover)
+b14.bind("<Leave>",button_hover_leave)
+
+#Estrechamiento del histograma
+img15 = leer_imagen("iconos/estrechamiento.png")
+b15=Button(root,image=img15,width=80,command=lambda:filtroMinimo())
+b15.grid(row=2,column=6)
+b15.bind("<Enter>",button_hover)
+b15.bind("<Leave>",button_hover_leave)
+
 frame=Frame(root,height=h,width=w,bg="gray")
-frame.grid(row=2,column=0,columnspan=8,sticky="nsew")
+frame.grid(row=3,column=0,columnspan=8,sticky="nsew")
 
 status_label = Label(root,text='',bd=1,relief=SUNKEN,anchor=E,font=(18),pady=10)
-status_label.grid(row=3,column=0,columnspan=8,sticky="nsew")
+status_label.grid(row=4,column=0,columnspan=8,sticky="nsew")
 
 root.mainloop()
