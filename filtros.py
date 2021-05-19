@@ -99,6 +99,35 @@ def convolucion(kernel, imagen):
     
     return img_conv
 
+def binarizar(img,umbral):
+    
+    #Verifica si la imagen tiene 3 canales RGB
+    if(len(img.shape)==3):
+        #Si los tiene la convierte a escala de grises con un solo canal
+        ret = cv.cvtColor(img, cv.COLOR_BGR2GRAY)
+    else:    
+        #En caso de que la imagen original es de un canal se crea una copia
+        ret = copy.copy(img)
+    
+    #Dimensiones de la imagen
+    filas = ret.shape[1]
+    columnas = ret.shape[0]
+    
+    #Recorre columnas
+    for i in range(columnas):
+        #Recorre filas
+        for j in range(filas):
+            if(ret[i,j] > umbral):
+                ret[i,j] = 255
+            else:
+                ret[i,j] = 0
+           
+    #Muestra los resultados
+    cv.imshow('Binarización', ret)
+    cv.waitKey()
+    
+    return ret
+
 def fgaussiano(img,tipo):
     if tipo==3:
         ret = convolucion([[1,2,1],[2,4,2],[1,2,1]]*1/16, img)

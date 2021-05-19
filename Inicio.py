@@ -57,6 +57,8 @@ def button_hover(e):
         status_label.config(text="Filtro Máximo")
     elif widget==b15:
         status_label.config(text="Filtro Mínimo")
+    elif widget==b16:
+        status_label.config(text="Binarizar")
 
 def button_hover_leave(e):
     status_label.config(text="")
@@ -349,6 +351,15 @@ def filtroMaximo():
 def filtroMinimo():
     pass
 
+def fbinarizar():
+    #Si no hay imagenes seleccionadas muestra advertencia
+    if(len(im)==0):
+        messagebox.showwarning(message="Debes seleccionar una imagen", 
+                             title="Imagen no seleccionada")
+        return
+    img = binarizar(im[img_sel],150)
+    agregar_img(img)
+
 def eliminar_img():
     global imagenes,imagenesLabel,im,nomb_imagenes,seleccion_anterior,img_sel,frame
     imagenesLabel[img_sel].config(bd=0)
@@ -531,6 +542,13 @@ b15=Button(root,image=img15,width=80,command=lambda:filtroMinimo())
 b15.grid(row=2,column=6)
 b15.bind("<Enter>",button_hover)
 b15.bind("<Leave>",button_hover_leave)
+
+#Estrechamiento del histograma
+img16 = leer_imagen("iconos/estrechamiento.png")
+b16=Button(root,image=img16,width=80,command=lambda:fbinarizar())
+b16.grid(row=2,column=7)
+b16.bind("<Enter>",button_hover)
+b16.bind("<Leave>",button_hover_leave)
 
 frame=Frame(root,height=h,width=w,bg="gray")
 frame.grid(row=3,column=0,columnspan=8,sticky="nsew")
