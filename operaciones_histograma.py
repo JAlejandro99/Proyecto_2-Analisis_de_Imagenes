@@ -267,6 +267,60 @@ def estrechamiento(img, Cmin, Cmax):
     
     return nueva_img
 
+#Algoritmo general de convolución
+#Recibe como parámetro el kernel y la imagen a la que se aplica la convolución
+#Regresa una matriz que es la imagen resultado de la convolución
+def convolucion(kernel, imagen):
+    
+    #Verifica dimensiones del kernel
+    tam_kernel = len(kernel)
+    if(tam_kernel % 2 == 0 | len(kernel) < 3):
+        #Si el tamaño es impar o es menor a 3 regresa
+        print("Las dimensiones del kernel no son correctas")
+        return
+    
+    #Verifica si la imagen tiene 3 canales RGB
+    if(len(imagen.shape)==3):
+        #Si los tiene la convierte a escala de grises con un solo canal
+        nueva_img=cv.cvtColor(imagen, cv.COLOR_BGR2GRAY)
+    else:    
+        #En caso de que la imagen original es de un canal se crea una copia
+        nueva_img = copy.copy(imagen)
+        
+    #Matriz para guardar resultados de convolución
+    img_conv = copy.copy(nueva_img)
+
+    print(nueva_img.shape)    
+    #Dimensiones de la imagen
+    filas = nueva_img.shape[1]
+    columnas = nueva_img.shape[0]
+    #Origen del kernel
+    origenk = tam_kernel//2
+    
+    #Recorre columnas
+    for i in range(origenk, columnas - origenk):
+        #Recorre filas
+        for j in range(origenk, filas - origenk):
+            #Suma de valores
+            r = 0
+            ventana = nueva_img[i-1:i+2,j-1:j+2]
+            aux = ventana*kernel
+            for l in aux :
+                r += sum(l)
+            if(r > 255):
+                r = 255
+            if(r < 0):
+                r = 0
+            img_conv[i][j] = r
+           
+    #Muestra los resultados
+    cv.imshow('Original', nueva_img)
+    cv.waitKey()
+    cv.imshow('Convolucion', img_conv)
+    cv.waitKey()
+    
+    return img_conv
+
 def principal():
     im=cv.imread("Imagen1.png")
     im2=cv.imread("Imagen1.png")
@@ -287,3 +341,4 @@ def principal():
     ecualizacion(im)
     # Estrechamiento de Histograma
     estrechamiento(copy.copy(im2), 50, 150)
+    
