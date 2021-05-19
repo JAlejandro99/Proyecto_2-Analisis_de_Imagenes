@@ -301,16 +301,20 @@ def convolucion(kernel, imagen):
     for i in range(origenk, columnas - origenk):
         #Recorre filas
         for j in range(origenk, filas - origenk):
-            #Suma de valores
             r = 0
+            #Crea una ventana de la imagen del tamaño del kernel
             ventana = nueva_img[i-1:i+2,j-1:j+2]
+            #Multiplica las matrices
             aux = ventana*kernel
+            #Suma de valores
             for l in aux :
                 r += sum(l)
+            #Normalización
             if(r > 255):
                 r = 255
             if(r < 0):
                 r = 0
+            #Asigna el valor a la nueva imagen
             img_conv[i][j] = r
            
     #Muestra los resultados
