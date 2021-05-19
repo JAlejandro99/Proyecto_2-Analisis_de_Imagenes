@@ -101,9 +101,9 @@ def convolucion(kernel, imagen):
 
 def fgaussiano(img,tipo):
     if tipo==3:
-        ret = convolucion([[1/16,2/16,1/16],[2/16,4/16,2/16],[1/16,2/16,1/16]], img)
+        ret = convolucion([[1,2,1],[2,4,2],[1,2,1]]*1/16, img)
     else:
-        ret = convolucion([[1/246,4/246,6/246,4/246,1/246],[4/246,16/246,24/246,16/246,4/246],[6/246,24/246,36/246,24/246,6/246],[4/246,16/246,24/246,16/246,4/246],[1/246,4/246,6/246,4/246,1/246]], img)
+        ret = convolucion([[1,4,6,4,1],[4,16,24,16,4],[6,24,36,24,6],[4,16,24,16,4],[1,4,6,4,1]]*1/246, img)
     return ret
 
 def froberts(img):
@@ -113,13 +113,18 @@ def froberts(img):
     return gx,gy,f
 
 def fprewitt(img):
-    gx = convolucion([[1/3,0,-1/3],[1/3,0,-1/3],[1/3,0,-1/3]], img)
-    gy = convolucion([[-1/3,-1/3,-1/3],[0,0,0],[1/3,1/3,1/3]], img)
+    gx = convolucion([[1,0,-1],[1,0,-1],[1,0,-1]]*1/3, img)
+    gy = convolucion([[-1,-1,-1],[0,0,0],[1,1,1]]*1/3, img)
     f = suma_imgs(gx,gy)
     return gx,gy,f
 
 def fsobel(img):
-    gx = convolucion([[1/4,0,-1/4],[2/4,0,-2/4],[1/4,0,-1/4]], img)
-    gy = convolucion([[-1/4,-2/4,-1/4],[0,0,0],[1/4,2/4,1/4]], img)
+    gx = convolucion([[1,0,-1],[2,0,-2],[1,0,-1]]*1/4, img)
+    gy = convolucion([[-1,-2,-1],[0,0,0],[1,2,1]]*1/4, img)
     f = suma_imgs(gx,gy)
     return gx,gy,f
+
+#kernel
+"""im=cv.imread("Imagen1.png")
+kernel = np.array([[1,2,1],[2,4,2],[1,2,1]])*(1/9)
+convolucion(kernel,im)"""

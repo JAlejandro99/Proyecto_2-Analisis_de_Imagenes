@@ -327,7 +327,7 @@ def filtroPrewitt():
         messagebox.showwarning(message="Debes seleccionar una imagen", 
                              title="Imagen no seleccionada")
         return
-    img = fprewit(im[img_sel])
+    img = fprewitt(im[img_sel])
     agregar_img(img[0])
     agregar_img(img[1])
     agregar_img(img[2])
