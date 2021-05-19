@@ -345,3 +345,7 @@ def principal():
     # Estrechamiento de Histograma
     estrechamiento(copy.copy(im2), 50, 150)
     
+#kernel
+im=cv.imread("Imagen1.png")
+kernel = np.array([[1,2,1],[2,4,2],[1,2,1]])*(1/9)
+convolucion(kernel,im)
