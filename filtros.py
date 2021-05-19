@@ -100,7 +100,6 @@ def convolucion(kernel, imagen):
     return img_conv
 
 def binarizar(img,umbral):
-    
     #Verifica si la imagen tiene 3 canales RGB
     if(len(img.shape)==3):
         #Si los tiene la convierte a escala de grises con un solo canal
@@ -130,9 +129,9 @@ def binarizar(img,umbral):
 
 def fgaussiano(img,tipo):
     if tipo==3:
-        ret = convolucion([[1,2,1],[2,4,2],[1,2,1]]*1/16, img)
+        ret = convolucion(np.array([[1,2,1],[2,4,2],[1,2,1]])*(1/16), img)
     else:
-        ret = convolucion([[1,4,6,4,1],[4,16,24,16,4],[6,24,36,24,6],[4,16,24,16,4],[1,4,6,4,1]]*1/246, img)
+        ret = convolucion(np.array([[1,4,6,4,1],[4,16,24,16,4],[6,24,36,24,6],[4,16,24,16,4],[1,4,6,4,1]])*(1/246), img)
     return ret
 
 def froberts(img):
@@ -142,16 +141,48 @@ def froberts(img):
     return gx,gy,f
 
 def fprewitt(img):
-    gx = convolucion([[1,0,-1],[1,0,-1],[1,0,-1]]*1/3, img)
-    gy = convolucion([[-1,-1,-1],[0,0,0],[1,1,1]]*1/3, img)
+    gx = convolucion(np.array([[1,0,-1],[1,0,-1],[1,0,-1]])*(1/3), img)
+    gy = convolucion(np.array([[-1,-1,-1],[0,0,0],[1,1,1]])*(1/3), img)
     f = suma_imgs(gx,gy)
     return gx,gy,f
 
 def fsobel(img):
-    gx = convolucion([[1,0,-1],[2,0,-2],[1,0,-1]]*1/4, img)
-    gy = convolucion([[-1,-2,-1],[0,0,0],[1,2,1]]*1/4, img)
+    gx = convolucion(np.array([[1,0,-1],[2,0,-2],[1,0,-1]])*(1/4), img)
+    gy = convolucion(np.array([[-1,-2,-1],[0,0,0],[1,2,1]])*(1/4), img)
     f = suma_imgs(gx,gy)
     return gx,gy,f
+
+def fmax_min(img):
+    #Verifica si la imagen tiene 3 canales RGB
+    if(len(img.shape)==3):
+        #Si los tiene la convierte a escala de grises con un solo canal
+        ret = cv.cvtColor(img, cv.COLOR_BGR2GRAY)
+    else:    
+        #En caso de que la imagen original es de un canal se crea una copia
+        ret = copy.copy(img)
+    
+    #Dimensiones de la imagen
+    filas = ret.shape[1]
+    columnas = ret.shape[0]
+    
+    hist=cv.calcHist([ret], [0], None, [256], [0, 256])
+    for i in range(len(hist)):
+        print(hist[i])
+
+    #Recorre columnas
+    """for i in range(columnas):
+        #Recorre filas
+        for j in range(filas):
+            if(ret[i,j] > umbral):
+                ret[i,j] = 255
+            else:
+                ret[i,j] = 0"""
+           
+    #Muestra los resultados
+    cv.imshow('Filtro Máximo', ret)
+    cv.waitKey()
+    
+    return ret
 
 #kernel
 """im=cv.imread("Imagen1.png")

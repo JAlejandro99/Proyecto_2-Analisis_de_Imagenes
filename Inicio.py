@@ -240,7 +240,7 @@ def verHist():
                              title="Imagen no seleccionada")
         return
     #Histograma de la imagen original
-    print(img_sel)
+    #print(img_sel)
     hist = h_original(im[img_sel])
     
 #Hacer que reciba imagenes en lugar de el nombre
@@ -346,7 +346,13 @@ def filtroSobel():
     agregar_img(img[2])
 
 def filtroMaximo():
-    pass
+    #Si no hay imagenes seleccionadas muestra advertencia
+    if(len(im)==0):
+        messagebox.showwarning(message="Debes seleccionar una imagen", 
+                             title="Imagen no seleccionada")
+        return
+    img = fmax_min(im[img_sel])
+    agregar_img(img)
 
 def filtroMinimo():
     pass
