@@ -289,8 +289,7 @@ def convolucion(kernel, imagen):
         
     #Matriz para guardar resultados de convolución
     img_conv = copy.copy(nueva_img)
-
-    print(nueva_img.shape)    
+    
     #Dimensiones de la imagen
     filas = nueva_img.shape[1]
     columnas = nueva_img.shape[0]
