@@ -111,17 +111,27 @@ def binarizar(img,umbral):
     
     return ret
 
-def rgaussiano(img,sigma):
-    #Verifica si la imagen tiene 3 canales RGB
-    if(len(img.shape)==3):
-        #Si los tiene la convierte a escala de grises con un solo canal
-        ret = cv.cvtColor(img, cv.COLOR_BGR2GRAY)
-    else:    
-        #En caso de que la imagen original es de un canal se crea una copia
-        ret = copy.copy(img)
+def rgaussiano(im,media,varianza):
     
-    return ret
+    #Verifica si la imagen tiene 3 canales RGB
+    if(len(im.shape)==3):
+        #Si los tiene la convierte a escala de grises con un solo canal
+        im2=cv.cvtColor(im, cv.COLOR_BGR2GRAY)
+    else:
+        #En caso de que la imagen original es de un canal se crea una copia
+        im2 = copy.copy(im)
+    
+    im2= np.array(im2/255, dtype=float)
+    ruido=np.random.normal(media, varianza ** 0.5, im2.shape)
+    agregar=im2+ruido
+    if agregar.min() < 0:
+        low_clip = -1
+    else:
+        low_clip = 0
+    agregar=np.clip(agregar, low_clip, 1.0)
+    agregar=np.uint8(agregar*255)
 
+    return agregar
 
 def fgaussiano(img,tipo):
     if tipo==3:
@@ -188,6 +198,8 @@ def fmax(img,tam_ventana):
     cv.waitKey()
     cv.imshow('Filtro maximo', img_max)
     cv.waitKey()
+
+    return img_max
   
 #Función que implementa el filtro minimo
 #Recibe como parámetro una imagen y el tamaño de la ventana
@@ -203,7 +215,7 @@ def fmin(img,tam_ventana):
         nueva_img = copy.copy(img)
         
     #Matriz para guardar resultados de aplicar el filtro
-    img_max = copy.copy(nueva_img)
+    img_min = copy.copy(nueva_img)
       
     #Dimensiones de la imagen
     filas = nueva_img.shape[1]
@@ -222,15 +234,41 @@ def fmin(img,tam_ventana):
             for m in ventana:
                 for n in m:
                     if int(n) < minimo: minimo = int(n)
-            img_max[i][j] = minimo
+            img_min[i][j] = minimo
            
     #Muestra los resultados
     cv.imshow('Original', nueva_img)
     cv.waitKey()
-    cv.imshow('Filtro minimo', img_max)
+    cv.imshow('Filtro minimo', img_min)
     cv.waitKey()
+    
+    return img_min
 
+def principal():
+    
+    im=cv.imread("manzana.jpg",0)
+    
+    #Imagen Original
+    cv.imshow('Imagen original', im)
+    hist=cv.calcHist([im], [0], None, [256], [0, 256])
+    plt.plot(hist, color='gray' )
+    plt.title("Histograma Original")
+    plt.xlabel('Intensidad de iluminacion')
+    plt.ylabel('Cantidad de pixeles')
+    plt.show()
+    
+    #Imagen con Ruido Gaussiano
+    im_ruido=rgaussiano(im, 0, 0.001)#Los parámetros pueden ser introducidos por el usuario
+    cv.imshow('Imagen con ruido', im_ruido)
+    hist2=cv.calcHist([im_ruido], [0], None, [256], [0, 256])
+    plt.plot(hist2, color='gray' )
+    plt.title("Histograma con ruido Gaussiano")
+    plt.xlabel('Intensidad de iluminacion')
+    plt.ylabel('Cantidad de pixeles')
+    plt.show()
+    cv.waitKey(0)
 
+#principal()
 #kernel
 """im=cv.imread("Imagen1.png")
 kernel = np.array([[1,2,1],[2,4,2],[1,2,1]])*(1/9)

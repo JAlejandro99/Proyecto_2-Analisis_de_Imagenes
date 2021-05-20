@@ -63,61 +63,6 @@ def button_hover(e):
 def button_hover_leave(e):
     status_label.config(text="")
 
-#Ventana para elgir un valor de desplazamiento
-def eligeDesp(desplazamiento):
-    
-    def guardaDato():
-        a = -1
-
-        try:
-            a = int(my_spin.get())
-            
-            #Comprueba el valor del dato ingresado
-            if(a>=0 and a<=255):
-               despWindow.destroy()
-               if(desplazamiento == False):
-                   #Desplazamiento a la izquierda
-                   img = desplazamiento_i(im[img_sel],a)
-                   agregar_img(img)
-               else:
-                    #Desplazamiento a la derecha
-                    img = desplazamiento_d(im[img_sel],a)
-                    agregar_img(img)
-                   
-            else:
-                messagebox.showerror(message="El valor debe ser un entero entre 0 y 255", 
-                             title="Valor fuera de rango")
-            
-        except:
-            messagebox.showerror(message="No se aceptan caracteres, solo números", 
-                             title="Tipo de dato incorrecto")
-
-    #Ubica la ventana en el centro
-    ancho_v = 200
-    alto_v = 150
-
-    x_v = root.winfo_screenwidth() // 2 - ancho_v // 2
-    y_v = root.winfo_screenheight() // 2 - alto_v // 2
-
-    pos = str(ancho_v) + "x" + str(alto_v) + "+" + str(x_v) + "+" + str(y_v)
-    despWindow = Toplevel(root)
-    despWindow.title("Desplazamiento")
-    despWindow.geometry(pos)
-    despWindow.resizable(ancho_v, alto_v)
-    
-    lblspin = Label(despWindow, text="Elige un valor de desplazamiento")
-    lblspin.pack(pady=10)
-    
-    #Spinbox para elegir un valor
-    my_spin = Spinbox(despWindow, from_=0, to=255,)
-    my_spin.pack(pady=10)
-    
-    #Boton para enviar
-    my_button = Button(despWindow, 
-                       text="Aceptar", 
-                       command= guardaDato)
-    my_button.pack(pady=20)
-
 def pedirValor(titulo,tipo,l1,l2):
     
     def guardaDato():
@@ -132,14 +77,27 @@ def pedirValor(titulo,tipo,l1,l2):
             #Comprueba el valor del dato ingresado
             if(aux>=l1 and aux<=l2):
                 w.destroy()
-                if tipo==0:
-                    img = rgaussiano(im[img_sel],aux) #Se debe de preguntar al usuario
+                if tipo==1:
+                    #Filtro Gaussiano
+                    img = fgaussiano(im[img_sel],aux)
                     agregar_img(img)
-                elif tipo==1:
-                    img = fgaussiano(im[img_sel],aux) #Se debe de preguntar al usuario
+                elif tipo==2:
+                    #Binarizacion
+                    img = binarizar(im[img_sel],aux)
+                    agregar_img(img)
+                elif tipo==3:
+                    #Desplazamiento a la izquierda
+                    img = desplazamiento_i(im[img_sel],aux)
+                    agregar_img(img)
+                elif tipo==4:
+                    #Desplazamiento a la derecha
+                    img = desplazamiento_d(im[img_sel],aux)
+                    agregar_img(img)
+                elif tipo==5:
+                    img = fmax(im[img_sel],aux)
                     agregar_img(img)
                 else:
-                    img = binarizar(im[img_sel],aux)
+                    img = fmin(im[img_sel],aux)
                     agregar_img(img)
             else:
                 messagebox.showerror(message="El valor debe ser un entero entre "+l1+" y "+l2, 
@@ -150,7 +108,7 @@ def pedirValor(titulo,tipo,l1,l2):
                              title="Tipo de dato incorrecto")
 
     #Ubica la ventana en el centro
-    ancho_v = 200
+    ancho_v = 450
     alto_v = 150
 
     x_v = root.winfo_screenwidth() // 2 - ancho_v // 2
@@ -166,8 +124,12 @@ def pedirValor(titulo,tipo,l1,l2):
         lblspin = Label(w, text="Ingresa el valor que tomará la desviación estandar")
     elif tipo==1:
         lblspin = Label(w, text="Ingresa el tamaño del kernel para el filtro (3 o 5)")
-    else:
+    elif tipo==2:
         lblspin = Label(w, text="Ingresa el valor del umbral para hacer la binarización")
+    elif tipo==3 or tipo==4:
+        lblspin = Label(w, text="Elige un valor de desplazamiento")
+    else:
+        lblspin = Label(w, text="Escribe el tamaño de la ventana, números impares")
     lblspin.pack(pady=10)
     
     #Spinbox para elegir un valor
@@ -181,22 +143,31 @@ def pedirValor(titulo,tipo,l1,l2):
     my_button.pack(pady=20)
 
 #Ventana para elegir valores de estrechamiento
-def eligeEstr():
+def pedirValor2(titulo,tipo,l1,l2,k1,k2):
  
     def guardaDatos():
-        Cmax = 0
-        Cmin = 0
+        aux1 = 0
+        aux2 = 0
 
         try:
-            Cmin = int(my_spin.get())
-            Cmax = int(my_spin2.get())
+            if tipo==1:
+                aux1 = float(my_spin.get())
+                aux2 = float(my_spin2.get())
+            else:
+                aux1 = int(my_spin.get())
+                aux2 = int(my_spin2.get())
             
             #Comprueba el valor de los datos ingresado
-            if((Cmax>=0 and Cmax<=255) and (Cmin>=0 and Cmin<=255)):
+            if((aux1>=l1 and aux1<=l2) and (aux2>=k1 and aux2<=k2)):
                 despWindow.destroy()
-                img = estrechamiento(im[img_sel],Cmin, Cmax)
-                agregar_img(img)
-                                   
+                if tipo==0:
+                    #Estrechamiento del histograma
+                    img = estrechamiento(im[img_sel],aux1, aux2)
+                    agregar_img(img)
+                else:
+                    #Ruido Gaussiano
+                    img = rgaussiano(im[img_sel],aux1,aux2)
+                    agregar_img(img)
             else:
                 messagebox.showerror(message="El valor debe ser un entero entre 0 y 255", 
                              title="Valor fuera de rango")
@@ -215,29 +186,37 @@ def eligeEstr():
     pos = str(ancho_v) + "x" + str(alto_v) + "+" + str(x_v) + "+" + str(y_v)
    
     despWindow = Toplevel(root)
-    despWindow.title("Estrechamiento")
+    despWindow.title(titulo) 
     despWindow.geometry(pos)
-    
-    lblspin = Label(despWindow, text="Elige los valores de compresión")
+    if tipo==0:
+        lblspin = Label(despWindow, text="Elige los valores de compresión")
+    else:
+        lblspin = Label(despWindow, text="Introduce los siguientes valores")
     lblspin.pack()
-    
-    lblspin2 = Label(despWindow, text="Cmin:")
+
+    if tipo==0:
+        lblspin2 = Label(despWindow, text="Cmin:")
+    else:
+        lblspin2 = Label(despWindow, text="Media:")
     lblspin2.place(x=40, y=50)
     lblspin.pack(pady=10)
     
     #Spinbox para elegir el valor de Cmin
     my_spin = Spinbox(despWindow, from_=0, to=255,)
     my_spin.place(x=50, y=20)
-    my_spin.pack(pady=10)
+    my_spin.pack(padx=120,pady=10)
     
-    lblspin2 = Label(despWindow, text="Cmax:")
+    if tipo==0:
+        lblspin2 = Label(despWindow, text="Cmax:")
+    else:
+        lblspin2 = Label(despWindow, text="Varianza:")
     lblspin2.place(x=40, y=90)
     lblspin.pack()
 
     #Spinbox para elegir el valor de Cmax
     my_spin2 = Spinbox(despWindow, from_=0, to=255,)
     my_spin2.place(x=50, y=70)
-    my_spin2.pack(pady=10)
+    my_spin2.pack(padx=120,pady=10)
     
     
     #Boton para enviar
@@ -324,7 +303,8 @@ def despIzqHist():
         messagebox.showwarning(message="Debes seleccionar una imagen", 
                              title="Imagen no seleccionada")
         return
-    eligeDesp(False)
+    #eligeDesp(False)
+    pedirValor("Desplazamiento a la Izquierda",3,0,255)
     
 def despDerHist():
     #Si no hay imagenes seleccionadas muestra advertencia
@@ -332,7 +312,8 @@ def despDerHist():
         messagebox.showwarning(message="Debes seleccionar una imagen", 
                              title="Imagen no seleccionada")
         return
-    eligeDesp(True)
+    #eligeDesp(True)
+    pedirValor("Desplazamiento a la Derecha",3,0,255)
 
 def estHist():
     #Si no hay imagenes seleccionadas muestra advertencia
@@ -360,7 +341,7 @@ def histEstr():
         messagebox.showwarning(message="Debes seleccionar una imagen", 
                              title="Imagen no seleccionada")
         return
-    eligeEstr()
+    pedirValor2("Estrechamiento",0,0,255,0,255)
 
 def ruidoGaussiano():
     #Si no hay imagenes seleccionadas muestra advertencia
@@ -368,7 +349,7 @@ def ruidoGaussiano():
         messagebox.showwarning(message="Debes seleccionar una imagen", 
                              title="Imagen no seleccionada")
         return
-    pedirValor("Ruido Gaussiano",0,0.0,5.0)
+    pedirValor2("Ruido Gaussiano",1,0,255,0.0,5.0)
 
 def filtroGaussiano():
     #Si no hay imagenes seleccionadas muestra advertencia
@@ -417,8 +398,7 @@ def filtroMaximo():
         messagebox.showwarning(message="Debes seleccionar una imagen", 
                              title="Imagen no seleccionada")
         return
-    img = fmax(im[img_sel])
-    agregar_img(img)
+    pedirValor("Filtro máximo",5,3,29)
 
 def filtroMinimo():
     #Si no hay imagenes seleccionadas muestra advertencia
@@ -426,8 +406,7 @@ def filtroMinimo():
         messagebox.showwarning(message="Debes seleccionar una imagen", 
                              title="Imagen no seleccionada")
         return
-    img = fmin(im[img_sel])
-    agregar_img(img)
+    pedirValor("Filtro mínimo",6,3,29)
 
 def fbinarizar():
     #Si no hay imagenes seleccionadas muestra advertencia
