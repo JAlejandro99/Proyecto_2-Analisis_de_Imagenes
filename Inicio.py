@@ -118,6 +118,68 @@ def eligeDesp(desplazamiento):
                        command= guardaDato)
     my_button.pack(pady=20)
 
+def pedirValor(titulo,tipo,l1,l2):
+    
+    def guardaDato():
+        aux = -1
+
+        try:
+            if tipo==0:
+                aux = float(my_spin.get())
+            else:
+                aux = int(my_spin.get())
+            
+            #Comprueba el valor del dato ingresado
+            if(aux>=l1 and aux<=l2):
+                w.destroy()
+                if tipo==0:
+                    img = rgaussiano(im[img_sel],aux) #Se debe de preguntar al usuario
+                    agregar_img(img)
+                elif tipo==1:
+                    img = fgaussiano(im[img_sel],aux) #Se debe de preguntar al usuario
+                    agregar_img(img)
+                else:
+                    img = binarizar(im[img_sel],aux)
+                    agregar_img(img)
+            else:
+                messagebox.showerror(message="El valor debe ser un entero entre "+l1+" y "+l2, 
+                             title="Valor fuera de rango")
+            
+        except:
+            messagebox.showerror(message="No se aceptan caracteres, solo números", 
+                             title="Tipo de dato incorrecto")
+
+    #Ubica la ventana en el centro
+    ancho_v = 200
+    alto_v = 150
+
+    x_v = root.winfo_screenwidth() // 2 - ancho_v // 2
+    y_v = root.winfo_screenheight() // 2 - alto_v // 2
+
+    pos = str(ancho_v) + "x" + str(alto_v) + "+" + str(x_v) + "+" + str(y_v)
+    w = Toplevel(root)
+    w.title(titulo)
+    w.geometry(pos)
+    w.resizable(ancho_v, alto_v)
+    
+    if tipo==0:
+        lblspin = Label(w, text="Ingresa el valor que tomará la desviación estandar")
+    elif tipo==1:
+        lblspin = Label(w, text="Ingresa el tamaño del kernel para el filtro (3 o 5)")
+    else:
+        lblspin = Label(w, text="Ingresa el valor del umbral para hacer la binarización")
+    lblspin.pack(pady=10)
+    
+    #Spinbox para elegir un valor
+    my_spin = Spinbox(w, from_=l1, to=l2,)
+    my_spin.pack(pady=10)
+    
+    #Boton para enviar
+    my_button = Button(w, 
+                       text="Aceptar", 
+                       command= guardaDato)
+    my_button.pack(pady=20)
+
 #Ventana para elegir valores de estrechamiento
 def eligeEstr():
  
@@ -301,7 +363,12 @@ def histEstr():
     eligeEstr()
 
 def ruidoGaussiano():
-    pass
+    #Si no hay imagenes seleccionadas muestra advertencia
+    if(len(im)==0):
+        messagebox.showwarning(message="Debes seleccionar una imagen", 
+                             title="Imagen no seleccionada")
+        return
+    pedirValor("Ruido Gaussiano",0,0.0,5.0)
 
 def filtroGaussiano():
     #Si no hay imagenes seleccionadas muestra advertencia
@@ -309,8 +376,7 @@ def filtroGaussiano():
         messagebox.showwarning(message="Debes seleccionar una imagen", 
                              title="Imagen no seleccionada")
         return
-    img = fgaussiano(im[img_sel],3) #Se debe de preguntar al usuario
-    agregar_img(img)
+    pedirValor("Filtro Gaussiano",1,3,5)
 
 def filtroRoberts():
     #Si no hay imagenes seleccionadas muestra advertencia
@@ -351,11 +417,17 @@ def filtroMaximo():
         messagebox.showwarning(message="Debes seleccionar una imagen", 
                              title="Imagen no seleccionada")
         return
-    img = fmax_min(im[img_sel])
+    img = fmax(im[img_sel])
     agregar_img(img)
 
 def filtroMinimo():
-    pass
+    #Si no hay imagenes seleccionadas muestra advertencia
+    if(len(im)==0):
+        messagebox.showwarning(message="Debes seleccionar una imagen", 
+                             title="Imagen no seleccionada")
+        return
+    img = fmin(im[img_sel])
+    agregar_img(img)
 
 def fbinarizar():
     #Si no hay imagenes seleccionadas muestra advertencia
@@ -363,8 +435,7 @@ def fbinarizar():
         messagebox.showwarning(message="Debes seleccionar una imagen", 
                              title="Imagen no seleccionada")
         return
-    img = binarizar(im[img_sel],150)
-    agregar_img(img)
+    pedirValor("Binarización",2,0,255)
 
 def eliminar_img():
     global imagenes,imagenesLabel,im,nomb_imagenes,seleccion_anterior,img_sel,frame
@@ -536,21 +607,21 @@ b13.bind("<Enter>",button_hover)
 b13.bind("<Leave>",button_hover_leave)
 
 #Histograma de la imagen ecualizada
-img14 = leer_imagen("iconos/ecualizacion.png")
+img14 = leer_imagen("iconos/maximo.png")
 b14=Button(root,image=img14,width=80,command=lambda:filtroMaximo())
 b14.grid(row=2,column=5)
 b14.bind("<Enter>",button_hover)
 b14.bind("<Leave>",button_hover_leave)
 
 #Estrechamiento del histograma
-img15 = leer_imagen("iconos/estrechamiento.png")
+img15 = leer_imagen("iconos/minimo.png")
 b15=Button(root,image=img15,width=80,command=lambda:filtroMinimo())
 b15.grid(row=2,column=6)
 b15.bind("<Enter>",button_hover)
 b15.bind("<Leave>",button_hover_leave)
 
 #Estrechamiento del histograma
-img16 = leer_imagen("iconos/estrechamiento.png")
+img16 = leer_imagen("iconos/binarizar.png")
 b16=Button(root,image=img16,width=80,command=lambda:fbinarizar())
 b16.grid(row=2,column=7)
 b16.bind("<Enter>",button_hover)

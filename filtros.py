@@ -4,22 +4,6 @@ import cv2 as cv
 import copy
 import math
 
-def atan_imgs(img1,img2):
-    ret = copy.copy(img1)
-    #Dimensiones de la imagen
-    filas = ret.shape[1]
-    columnas = ret.shape[0]
-    for i in range(columnas):
-        #Recorre filas
-        for j in range(filas):
-            ret[i,j] = int(math.degrees(math.atan2(img2[i,j],img1[i,j])))
-    
-    #Muestra los resultados
-    cv.imshow('Arcotangente de imagenes', ret)
-    cv.waitKey()
-
-    return ret
-
 def suma_imgs(img1,img2):
     ret = copy.copy(img1)
     #Dimensiones de la imagen
@@ -127,6 +111,18 @@ def binarizar(img,umbral):
     
     return ret
 
+def rgaussiano(img,sigma):
+    #Verifica si la imagen tiene 3 canales RGB
+    if(len(img.shape)==3):
+        #Si los tiene la convierte a escala de grises con un solo canal
+        ret = cv.cvtColor(img, cv.COLOR_BGR2GRAY)
+    else:    
+        #En caso de que la imagen original es de un canal se crea una copia
+        ret = copy.copy(img)
+    
+    return ret
+
+
 def fgaussiano(img,tipo):
     if tipo==3:
         ret = convolucion(np.array([[1,2,1],[2,4,2],[1,2,1]])*(1/16), img)
@@ -152,37 +148,11 @@ def fsobel(img):
     f = suma_imgs(gx,gy)
     return gx,gy,f
 
-def fmax_min(img):
-    #Verifica si la imagen tiene 3 canales RGB
-    if(len(img.shape)==3):
-        #Si los tiene la convierte a escala de grises con un solo canal
-        ret = cv.cvtColor(img, cv.COLOR_BGR2GRAY)
-    else:    
-        #En caso de que la imagen original es de un canal se crea una copia
-        ret = copy.copy(img)
-    
-    #Dimensiones de la imagen
-    filas = ret.shape[1]
-    columnas = ret.shape[0]
-    
-    hist=cv.calcHist([ret], [0], None, [256], [0, 256])
-    for i in range(len(hist)):
-        print(hist[i])
+def fmax(img):
+    pass
 
-    #Recorre columnas
-    """for i in range(columnas):
-        #Recorre filas
-        for j in range(filas):
-            if(ret[i,j] > umbral):
-                ret[i,j] = 255
-            else:
-                ret[i,j] = 0"""
-           
-    #Muestra los resultados
-    cv.imshow('Filtro Máximo', ret)
-    cv.waitKey()
-    
-    return ret
+def fmin(img):
+    pass
 
 #kernel
 """im=cv.imread("Imagen1.png")
