@@ -77,7 +77,7 @@ def convolucion(kernel, imagen):
         for j in range(origenk, filas - origenk):
             r = 0
             #Crea una ventana de la imagen del tamaño del kernel
-            ventana = nueva_img[i-1:i+2,j-1:j+2]
+            ventana = nueva_img[i-origenk:i+origenk+1,j-origenk:j+origenk+1]
             #Multiplica las matrices
             aux = ventana*kernel
             #Suma de valores
@@ -152,39 +152,102 @@ def fsobel(img):
     f = suma_imgs(gx,gy)
     return gx,gy,f
 
-def fmax_min(img):
+#Función que implementa el filtro máximo
+#Recibe como parámetro una imagen y el tamaño de la ventana
+#Regresa la imagen resultante de aplicar el filtro máxmo
+def fmax(img,tam_ventana):
+    
     #Verifica si la imagen tiene 3 canales RGB
     if(len(img.shape)==3):
         #Si los tiene la convierte a escala de grises con un solo canal
-        ret = cv.cvtColor(img, cv.COLOR_BGR2GRAY)
+        nueva_img=cv.cvtColor(img, cv.COLOR_BGR2GRAY)
     else:    
         #En caso de que la imagen original es de un canal se crea una copia
-        ret = copy.copy(img)
-    
+        nueva_img = copy.copy(img)
+        
+    #Matriz para guardar resultados de aplicar el filtro
+    img_max = copy.copy(nueva_img)
+      
     #Dimensiones de la imagen
-    filas = ret.shape[1]
-    columnas = ret.shape[0]
+    filas = nueva_img.shape[1]
+    columnas = nueva_img.shape[0]
+    #Origen de la ventana
+    origenv = tam_ventana//2
     
-    hist=cv.calcHist([ret], [0], None, [256], [0, 256])
-    for i in range(len(hist)):
-        print(hist[i])
-
     #Recorre columnas
-    """for i in range(columnas):
+    for i in range(origenv, columnas - origenv):
         #Recorre filas
-        for j in range(filas):
-            if(ret[i,j] > umbral):
-                ret[i,j] = 255
-            else:
-                ret[i,j] = 0"""
+        for j in range(origenv, filas - origenv):
+            #Crea una ventana de la imagen con el tamaño del parametro
+            ventana = nueva_img[i-origenv:i+origenv+1,j-origenv:j+origenv+1]
+            #Encuentra el máximo y sustituye en la nueva imagen
+            maximo = 0
+            for m in ventana:
+                for n in m:
+                    if int(n) > maximo: maximo = int(n)
+            img_max[i][j] = maximo
            
     #Muestra los resultados
-    cv.imshow('Filtro Máximo', ret)
+    cv.imshow('Original', nueva_img)
     cv.waitKey()
+    cv.imshow('Filtro maximo', img_max)
+    cv.waitKey()
+  
+#Función que implementa el filtro minimo
+#Recibe como parámetro una imagen y el tamaño de la ventana
+#Regresa la imagen resultante de aplicar el filtro minimo
+def fmin(img,tam_ventana):
     
-    return ret
+    #Verifica si la imagen tiene 3 canales RGB
+    if(len(img.shape)==3):
+        #Si los tiene la convierte a escala de grises con un solo canal
+        nueva_img=cv.cvtColor(img, cv.COLOR_BGR2GRAY)
+    else:    
+        #En caso de que la imagen original es de un canal se crea una copia
+        nueva_img = copy.copy(img)
+        
+    #Matriz para guardar resultados de aplicar el filtro
+    img_max = copy.copy(nueva_img)
+      
+    #Dimensiones de la imagen
+    filas = nueva_img.shape[1]
+    columnas = nueva_img.shape[0]
+    #Origen de la ventana
+    origenv = tam_ventana//2
+    
+    #Recorre columnas
+    for i in range(origenv, columnas - origenv):
+        #Recorre filas
+        for j in range(origenv, filas - origenv):
+            #Crea una ventana de la imagen con el tamaño del parametro
+            ventana = nueva_img[i-origenv:i+origenv+1,j-origenv:j+origenv+1]
+            #Encuentra el minimo y sustituye en la nueva imagen
+            minimo = 255
+            for m in ventana:
+                for n in m:
+                    if int(n) < minimo: minimo = int(n)
+            img_max[i][j] = minimo
+           
+    #Muestra los resultados
+    cv.imshow('Original', nueva_img)
+    cv.waitKey()
+    cv.imshow('Filtro minimo', img_max)
+    cv.waitKey()
+
 
 #kernel
 """im=cv.imread("Imagen1.png")
 kernel = np.array([[1,2,1],[2,4,2],[1,2,1]])*(1/9)
-convolucion(kernel,im)"""
+convolucion(kernel,im)
+
+im=cv.imread("Casa.jpg")
+fgaussiano(im,3)
+fgaussiano(im,5)
+froberts(im)
+fprewitt(im)
+fsobel(im)
+"""
+
+prueba = cv.imread("prueba_maxmin.png")
+fmax(prueba,3)
+fmin(prueba,3)
