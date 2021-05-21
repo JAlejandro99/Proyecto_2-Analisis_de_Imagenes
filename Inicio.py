@@ -100,7 +100,7 @@ def pedirValor(titulo,tipo,l1,l2):
                     img = fmin(im[img_sel],aux)
                     agregar_img(img)
             else:
-                messagebox.showerror(message="El valor debe ser un entero entre "+l1+" y "+l2, 
+                messagebox.showerror(message="El valor debe ser entre "+l1+" y "+l2, 
                              title="Valor fuera de rango")
             
         except:
@@ -169,7 +169,7 @@ def pedirValor2(titulo,tipo,l1,l2,k1,k2):
                     img = rgaussiano(im[img_sel],aux1,aux2)
                     agregar_img(img)
             else:
-                messagebox.showerror(message="El valor debe ser un entero entre 0 y 255", 
+                messagebox.showerror(message="El primer valor valor debe ser entre "+l1+" y "+l2+" y el segundo valor debe ser entre "+k1+" y "+k2, 
                              title="Valor fuera de rango")
             
         except:
@@ -349,7 +349,7 @@ def ruidoGaussiano():
         messagebox.showwarning(message="Debes seleccionar una imagen", 
                              title="Imagen no seleccionada")
         return
-    pedirValor2("Ruido Gaussiano",1,0,255,0.0,5.0)
+    pedirValor2("Ruido Gaussiano",1,0,255,0.0,20.0)
 
 def filtroGaussiano():
     #Si no hay imagenes seleccionadas muestra advertencia
