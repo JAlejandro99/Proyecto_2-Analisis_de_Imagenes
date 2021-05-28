@@ -143,7 +143,11 @@ def fgaussiano(img,tipo):
 def froberts(img):
     gx = convolucion([[0,0,-1],[0,1,0],[0,0,0]], img)
     gy = convolucion([[-1,0,0],[0,1,0],[0,0,0]], img)
+    #g3 = convolucion([[0,0,0],[0,1,0],[0,0,-1]], img)
+    #g4 = convolucion([[0,0,0],[0,1,0],[-1,0,0]], img)
     f = suma_imgs(gx,gy)
+    #f = suma_imgs(f,g3)
+    #f = suma_imgs(f,g4)
     return gx,gy,f
 
 def fprewitt(img):

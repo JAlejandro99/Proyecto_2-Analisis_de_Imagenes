@@ -313,7 +313,7 @@ def despDerHist():
                              title="Imagen no seleccionada")
         return
     #eligeDesp(True)
-    pedirValor("Desplazamiento a la Derecha",3,0,255)
+    pedirValor("Desplazamiento a la Derecha",4,0,255)
 
 def estHist():
     #Si no hay imagenes seleccionadas muestra advertencia
